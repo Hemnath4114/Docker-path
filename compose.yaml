@@ -1,0 +1,17 @@
+services:
+  mini-tts:
+    build:
+      context: .
+    container_name: mini-tts-dev
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - ./app.py:/app/app.py
+      - ./models:/app/models
+      - mini-tts-output:/app/output
+
+volumes:
+  mini-tts-output:
+    external: true

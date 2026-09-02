@@ -7,8 +7,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
-COPY en_US-lessac-medium.onnx .
-COPY en_US-lessac-medium.onnx.json .
 
 EXPOSE 5000
 

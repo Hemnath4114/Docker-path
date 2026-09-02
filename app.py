@@ -1,17 +1,15 @@
 from flask import Flask, request, send_file
 import subprocess
-import tempfile
 import os
 
 app = Flask(__name__)
 
-MODEL = "en_US-lessac-medium.onnx"
+MODEL = "/app/models/en_US-lessac-medium.onnx"
 
 
 @app.route("/health")
 def health():
-    return {"status": "ok", "version": "2.0"}
-
+    return {"status": "ok", "version": "3.0"}
 
 @app.route("/tts", methods=["POST"])
 def tts():
@@ -25,35 +23,32 @@ def tts():
     if not text.strip():
         return {"error": "text cannot be empty"}, 400
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp:
-        output_file = temp.name
+    output_dir = "/app/output"
+    os.makedirs(output_dir, exist_ok=True)
 
-    try:
-        subprocess.run(
-            [
-                "python",
-                "-m",
-                "piper",
-                "-m",
-                MODEL,
-                "-f",
-                output_file,
-            ],
-            input=text,
-            text=True,
-            check=True,
-        )
+    output_file = os.path.join(output_dir, "speech.wav")
 
-        return send_file(
+    subprocess.run(
+        [
+            "python",
+            "-m",
+            "piper",
+            "-m",
+            MODEL,
+            "-f",
             output_file,
-            mimetype="audio/wav",
-            as_attachment=True,
-            download_name="speech.wav",
-        )
+        ],
+        input=text,
+        text=True,
+        check=True,
+    )
 
-    finally:
-        if os.path.exists(output_file):
-            os.remove(output_file)
+    return send_file(
+        output_file,
+        mimetype="audio/wav",
+        as_attachment=True,
+        download_name="speech.wav",
+    )
 
 
 if __name__ == "__main__":
