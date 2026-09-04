@@ -6,11 +6,29 @@ services:
 
     ports:
       - "5000:5000"
+    
+    environment:
+      APP_VERSION: ${APP_VERSION:-3.0}
+
+    depends_on:
+      redis:
+        condition: service_healthy
+      
+
 
     volumes:
       - ./app.py:/app/app.py
       - ./models:/app/models
       - mini-tts-output:/app/output
+  redis:
+    image: redis:7-alpine
+    container_name: mini-tts-redis
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   mini-tts-output:

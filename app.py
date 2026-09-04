@@ -2,6 +2,7 @@ from flask import Flask, request, send_file
 import subprocess
 import os
 
+APP_VERSION = os.getenv("APP_VERSION", "3.0")
 app = Flask(__name__)
 
 MODEL = "/app/models/en_US-lessac-medium.onnx"
@@ -9,7 +10,7 @@ MODEL = "/app/models/en_US-lessac-medium.onnx"
 
 @app.route("/health")
 def health():
-    return {"status": "ok", "version": "3.0"}
+    return {"status": "ok", "version": APP_VERSION}
 
 @app.route("/tts", methods=["POST"])
 def tts():
