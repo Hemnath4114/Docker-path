@@ -4,3 +4,5 @@ __pycache__/
 *.wav
 .git/
 .gitignore
+.env
+api_key.txt

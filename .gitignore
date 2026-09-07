@@ -38,3 +38,6 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+
+#API keys
+api_key.txt

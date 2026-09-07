@@ -4,17 +4,22 @@ services:
       context: .
     container_name: mini-tts-dev
 
+    restart: unless-stopped
+
     ports:
       - "5000:5000"
     
     environment:
       APP_VERSION: ${APP_VERSION:-3.0}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
 
     depends_on:
       redis:
         condition: service_healthy
       
-
+    secrets:
+      - api_key
 
     volumes:
       - ./app.py:/app/app.py
@@ -24,11 +29,24 @@ services:
     image: redis:7-alpine
     container_name: mini-tts-redis
 
+    restart: unless-stopped
+
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
+
+  debug:
+    image: alpine
+    profiles:
+      - debug
+
+    command: ["sleep", "infinity"]
+
+secrets:
+  api_key:
+    file: ./api_key.txt
 
 volumes:
   mini-tts-output:
